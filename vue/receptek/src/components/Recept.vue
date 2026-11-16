@@ -1,4 +1,12 @@
 <script setup>
+import Kartyak from './Kartya.vue'
+
+defineProps({
+    recipes: {
+        type: Array,
+        required: true
+    }
+})
 </script>
 
 <template>
@@ -174,6 +182,7 @@
                         </div>
                     </div>
                 </div>
+                <Kartyak :recipes="recipes" />
             </div>
         </div>
     </section>

@@ -1,18 +1,15 @@
 <script setup>
 import { ref } from 'vue'
+
 import Recept from './components/Recept.vue'
 import UjRecept from './components/UjRecept.vue'
 
-const currentView = ref('recipes')
+const recipes = ref([])
+const showForm = ref(false)
 
-function showRecipes() {
-  currentView.value = 'recipes'
-}
-function showNewRecipe() {
-  currentView.value = 'new-recipe'
-}
-function handleAddRecipe() {
-  currentView.value = 'recipes'
+function addRecipe(recipe) {
+  recipes.value.push(recipe)
+  showForm.value = false
 }
 </script>
 
@@ -20,21 +17,19 @@ function handleAddRecipe() {
   <header>
     <nav class="navbar bg-white border-bottom py-3">
       <div class="container d-flex justify-content-between align-items-center">
-        <button
-          type="button"
-          class="navbar-brand d-flex align-items-center gap-2 fw-bold text-dark m-0 btn btn-link p-0 text-decoration-none"
-          @click="showRecipes"
-        >
+        <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-dark m-0" href="#">
           <span class="r-icon d-inline-flex align-items-center justify-content-center text-white fw-bold rounded-3">
             R
           </span>
           Receptkönyv
-        </button>
+        </a>
+
         <div class="d-flex align-items-center gap-4">
-          <button type="button" class="nav-link text-secondary fw-medium p-0 btn btn-link" @click="showRecipes">
+          <a class="nav-link text-secondary fw-medium p-0" href="#" @click.prevent="showForm = false">
             Receptek
-          </button>
-          <button type="button" class="btn btn-success text-white fw-medium px-3 py-2 rounded-3" @click="showNewRecipe">
+          </a>
+
+          <button class="btn btn-success text-white fw-medium px-3 py-2 rounded-3" @click="showForm = true">
             + Új recept
           </button>
         </div>
@@ -43,8 +38,11 @@ function handleAddRecipe() {
   </header>
 
   <main class="container my-4">
-    <Recept v-if="currentView === 'recipes'" />
-    <UjRecept v-else @addRecipe="handleAddRecipe" />
+
+    <UjRecept v-if="showForm" @addRecipe="addRecipe" />
+
+    <Recept v-else :recipes="recipes" />
+
   </main>
 
   <footer class="container bg-white border-top py-3 mt-auto">

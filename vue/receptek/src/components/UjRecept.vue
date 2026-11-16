@@ -44,54 +44,31 @@ function addRecipe() {
 
             <div class="mb-3">
                 <label class="form-label">Recept neve</label>
-                <input
-                    type="text"
-                    v-model="name"
-                    class="form-control"
-                    required
-                >
+                <input type="text" v-model="name" class="form-control" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Recept képe</label>
-                <input
-                    type="file"
-                    class="form-control"
-                    accept="image/*"
-                    @change="handleImage"
-                    required
-                >
+                <input type="file" class="form-control" accept="image/*" @change="handleImage" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Leírás</label>
-                <textarea
-                    type="text"
-                    v-model="description"
-                    class="form-control"
-                ></textarea>
+                <textarea v-model="description" class="form-control"></textarea>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Nehézség</label>
-                <select
-                    v-model="difficulty"
-                    class="form-select"
-                >
+                <select v-model="difficulty" class="form-select">
                     <option>Könnyű</option>
                     <option>Közepes</option>
                     <option>Nehéz</option>
                 </select>
             </div>
 
-                 <div class="mb-3">
+            <div class="mb-3">
                 <label class="form-label">Elkészítési idő</label>
-                <input
-                    type="number"
-                    v-model="time"
-                    class="form-control"
-                    required
-                >
+                <input type="number" v-model="time" class="form-control" required>
             </div>
 
             <button class="btn btn-success" type="submit">
@@ -101,7 +78,3 @@ function addRecipe() {
         </form>
     </main>
 </template>
-
-<style scoped>
-
-</style>
