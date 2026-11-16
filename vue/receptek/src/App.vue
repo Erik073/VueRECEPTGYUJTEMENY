@@ -16,18 +16,17 @@ import Recept from './components/Recept.vue';
           <a class="nav-link text-secondary fw-medium p-0" href="#">Receptek</a>
           <a class="btn btn-success text-white fw-medium px-3 py-2 rounded-3" href="#">+ Új recept</a>
         </div>
-
       </div>
     </nav>
-
   </header>
-  <section>
+  <main class="container my-4">
     <Recept />
-
-  </section>
-  <footer class="container">
-    <p>Receptkönyv</p>
-    <p>Főzz örömmel, oszd meg szeretettel.</p>
+  </main>
+  <footer class="container bg-white border-top py-3 mt-auto">
+    <div class="container d-flex justify-content-between align-items-center">
+      <p class="mb-0">Receptkönyv</p>
+      <p class="mb-0">Főzz örömmel, oszd meg szeretettel.</p>
+    </div>
   </footer>
 </template>
 
