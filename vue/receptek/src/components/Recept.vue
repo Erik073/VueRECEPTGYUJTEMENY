@@ -1,10 +1,48 @@
 <script setup>
+import { computed, ref } from 'vue'
 import Kartyak from './Kartya.vue'
 
-defineProps({
+const props = defineProps({
     recipes: {
         type: Array,
         required: true
+    }
+})
+
+const searchTerm = ref('')
+const selectedDifficulty = ref('')
+const sortBy = ref('name')
+
+const filteredRecipes = computed(() => {
+    const term = searchTerm.value.trim().toLowerCase()
+
+    return props.recipes.filter((recipe) => {
+        const matchesSearch = !term ||
+            (recipe.name && recipe.name.toLowerCase().includes(term)) ||
+            (recipe.description && recipe.description.toLowerCase().includes(term))
+
+        const matchesDifficulty = !selectedDifficulty.value || recipe.difficulty === selectedDifficulty.value
+
+        return matchesSearch && matchesDifficulty
+    })
+})
+
+const sortedRecipes = computed(() => {
+    const recipesCopy = [...filteredRecipes.value]
+
+    switch (sortBy.value) {
+        case 'time-asc':
+            return recipesCopy.sort((a, b) => Number(a.time || 0) - Number(b.time || 0))
+        case 'time-desc':
+            return recipesCopy.sort((a, b) => Number(b.time || 0) - Number(a.time || 0))
+        case 'difficulty':
+            return recipesCopy.sort((a, b) => {
+                const difficultyOrder = { 'Könnyű': 1, 'Közepes': 2, 'Nehéz': 3 }
+                return (difficultyOrder[a.difficulty] || 0) - (difficultyOrder[b.difficulty] || 0)
+            })
+        case 'name':
+        default:
+            return recipesCopy.sort((a, b) => (a.name || '').localeCompare(b.name || ''))
     }
 })
 </script>
@@ -14,175 +52,51 @@ defineProps({
         <p class="rcptgyjtmny">receptgyűjtemény</p>
         <h2>Mit főzzünk ma?</h2>
     </section>
+
     <section>
         <div class="container my-4">
             <form class="p-3 bg-white rounded-4 shadow-sm border border-light">
                 <div class="row g-3 align-items-center">
                     <div class="col-12 col-md-6">
-                        <input type="text" class="form-control form-control-lg rounded-3 border-secondary-subtle fs-6"
+                        <input v-model="searchTerm" type="text"
+                            class="form-control form-control-lg rounded-3 border-secondary-subtle fs-6"
                             placeholder="Keress receptet..." aria-label="Keress receptet">
                     </div>
+
                     <div class="col-12 col-md-3">
-                        <select class="form-select form-select-lg rounded-3 border-secondary-subtle fs-6"
+                        <select v-model="selectedDifficulty"
+                            class="form-select form-select-lg rounded-3 border-secondary-subtle fs-6"
                             aria-label="Nehézségi szint">
-                            <option selected value="">Minden nehézség</option>
-                            <option value="konnyu">Könnyű</option>
-                            <option value="kozepes">Közepes</option>
-                            <option value="nehez">Nehéz</option>
+                            <option value="">Minden nehézség</option>
+                            <option value="Könnyű">Könnyű</option>
+                            <option value="Közepes">Közepes</option>
+                            <option value="Nehéz">Nehéz</option>
                         </select>
                     </div>
+
                     <div class="col-12 col-md-3">
-                        <select class="form-select form-select-lg rounded-3 border-secondary-subtle fs-6"
-                            aria-label="Elkészítési idő">
-                            <option selected value="">Elkészítési idő szerint</option>
-                            <option value="15">15 perc alatt</option>
-                            <option value="30">30 perc alatt</option>
-                            <option value="60">60 perc alatt</option>
+                        <select v-model="sortBy"
+                            class="form-select form-select-lg rounded-3 border-secondary-subtle fs-6"
+                            aria-label="Rendezés">
+                            <option value="name">Név szerint</option>
+                            <option value="difficulty">Nehézség szerint</option>
+                            <option value="time-asc">Idő szerint ↑</option>
+                            <option value="time-desc">Idő szerint ↓</option>
                         </select>
                     </div>
                 </div>
             </form>
         </div>
     </section>
+
     <section class="py-5 bg-light">
         <div class="container">
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <div v-if="sortedRecipes.length === 0" class="alert alert-info mb-0">
+                Nincs találat a kiválasztott szűréshez.
+            </div>
 
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden recipe-card">
-                        <div class="position-relative">
-                            <img src="/src/assets/husleves.webp" class="card-img-top object-fit-cover"
-                                style="height: 200px;" alt="Gulyásleves">
-                            <span
-                                class="badge bg-white text-dark rounded-pill position-absolute bottom-0 end-0 m-3 px-3 py-2 shadow-sm fw-semibold">🕒
-                                50 perc</span>
-                        </div>
-                        <div class="card-body d-flex flex-column p-4">
-                            <div class="mb-2"><span class="badge rounded-pill badge-easy px-3 py-1">Könnyű</span></div>
-                            <h5 class="card-title fw-bold mb-2">Gulyásleves</h5>
-                            <p class="card-text text-muted small mb-4">A magyar konyha egyik legismertebb levese,
-                                marhahússal, zöldségekkel és fűszerpaprikával.</p>
-                            <a href="#"
-                                class="btn btn-recipe w-100 mt-auto py-2 px-3 rounded-3 d-flex justify-content-between align-items-center fw-semibold">
-                                <span>Recept megtekintése</span><span>&rarr;</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden recipe-card">
-                        <div class="position-relative">
-                            <img src="/src/assets/husleves.webp" class="card-img-top object-fit-cover"
-                                style="height: 200px;" alt="Paprikás krumpli">
-                            <span
-                                class="badge bg-white text-dark rounded-pill position-absolute bottom-0 end-0 m-3 px-3 py-2 shadow-sm fw-semibold">🕒
-                                60 perc</span>
-                        </div>
-                        <div class="card-body d-flex flex-column p-4">
-                            <div class="mb-2"><span class="badge rounded-pill badge-medium px-3 py-1">Közepes</span>
-                            </div>
-                            <h5 class="card-title fw-bold mb-2">Paprikás krumpli</h5>
-                            <p class="card-text text-muted small mb-4">Tartalmas egytálétel burgonyából, kolbásszal,
-                                hagymával és fűszerpaprikával.</p>
-                            <a href="#"
-                                class="btn btn-recipe w-100 mt-auto py-2 px-3 rounded-3 d-flex justify-content-between align-items-center fw-semibold">
-                                <span>Recept megtekintése</span><span>&rarr;</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden recipe-card">
-                        <div class="position-relative">
-                            <img src="/src/assets/husleves.webp" class="card-img-top object-fit-cover"
-                                style="height: 200px;" alt="Palacsinta">
-                            <span
-                                class="badge bg-white text-dark rounded-pill position-absolute bottom-0 end-0 m-3 px-3 py-2 shadow-sm fw-semibold">🕒
-                                20 perc</span>
-                        </div>
-                        <div class="card-body d-flex flex-column p-4">
-                            <div class="mb-2"><span class="badge rounded-pill badge-hard px-3 py-1">Nehéz</span></div>
-                            <h5 class="card-title fw-bold mb-2">Palacsinta</h5>
-                            <p class="card-text text-muted small mb-4">Vékony, könnyű tésztájú palacsinta, amely
-                                lekvárral, kakaóval vagy túróval is megtölthető.</p>
-                            <a href="#"
-                                class="btn btn-recipe w-100 mt-auto py-2 px-3 rounded-3 d-flex justify-content-between align-items-center fw-semibold">
-                                <span>Recept megtekintése</span><span>&rarr;</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden recipe-card">
-                        <div class="position-relative">
-                            <img src="/src/assets/husleves.webp" class="card-img-top object-fit-cover"
-                                style="height: 200px;" alt="Túrógombóc">
-                            <span
-                                class="badge bg-white text-dark rounded-pill position-absolute bottom-0 end-0 m-3 px-3 py-2 shadow-sm fw-semibold">🕒
-                                20 perc</span>
-                        </div>
-                        <div class="card-body d-flex flex-column p-4">
-                            <div class="mb-2"><span class="badge rounded-pill badge-easy px-3 py-1">Könnyű</span></div>
-                            <h5 class="card-title fw-bold mb-2">Túrógombóc</h5>
-                            <p class="card-text text-muted small mb-4">Puha túrógombóc pirított zsemlemorzsában,
-                                tejföllel és porcukorral tálalva.</p>
-                            <a href="#"
-                                class="btn btn-recipe w-100 mt-auto py-2 px-3 rounded-3 d-flex justify-content-between align-items-center fw-semibold">
-                                <span>Recept megtekintése</span><span>&rarr;</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden recipe-card">
-                        <div class="position-relative">
-                            <img src="/src/assets/husleves.webp" class="card-img-top object-fit-cover"
-                                style="height: 200px;" alt="Margherita pizza">
-                            <span
-                                class="badge bg-white text-dark rounded-pill position-absolute bottom-0 end-0 m-3 px-3 py-2 shadow-sm fw-semibold">🕒
-                                45 perc</span>
-                        </div>
-                        <div class="card-body d-flex flex-column p-4">
-                            <div class="mb-2"><span class="badge rounded-pill badge-medium px-3 py-1">Közepes</span>
-                            </div>
-                            <h5 class="card-title fw-bold mb-2">Margherita pizza</h5>
-                            <p class="card-text text-muted small mb-4">Klasszikus olasz pizza paradicsomszósszal,
-                                mozzarellával és friss bazsalikommal.</p>
-                            <a href="#"
-                                class="btn btn-recipe w-100 mt-auto py-2 px-3 rounded-3 d-flex justify-content-between align-items-center fw-semibold">
-                                <span>Recept megtekintése</span><span>&rarr;</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden recipe-card">
-                        <div class="position-relative">
-                            <img src="/src/assets/husleves.webp" class="card-img-top object-fit-cover"
-                                style="height: 200px;" alt="Sajtos hamburger">
-                            <span
-                                class="badge bg-white text-dark rounded-pill position-absolute bottom-0 end-0 m-3 px-3 py-2 shadow-sm fw-semibold">🕒
-                                25 perc</span>
-                        </div>
-                        <div class="card-body d-flex flex-column p-4">
-                            <div class="mb-2"><span class="badge rounded-pill badge-medium px-3 py-1">Közepes</span>
-                            </div>
-                            <h5 class="card-title fw-bold mb-2">Sajtos hamburger</h5>
-                            <p class="card-text text-muted small mb-4">Szaftos marhahúspogácsa olvadt sajttal, friss
-                                zöldségekkel és puha buciban.</p>
-                            <a href="#"
-                                class="btn btn-recipe w-100 mt-auto py-2 px-3 rounded-3 d-flex justify-content-between align-items-center fw-semibold">
-                                <span>Recept megtekintése</span><span>&rarr;</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <Kartyak :recipes="recipes" />
+            <div v-else class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                <Kartyak v-for="(recipe, index) in sortedRecipes" :key="recipe.id ?? index" :recipe="recipe" />
             </div>
         </div>
     </section>
@@ -197,41 +111,5 @@ h2 {
     color: #3d7a5b;
     font-variant: small-caps;
     font-weight: 900;
-}
-
-.btn-recipe {
-    background-color: #2f855a;
-    color: #ffffff;
-    border: none;
-    transition: background-color 0.2s ease, transform 0.2s ease;
-}
-
-.btn-recipe:hover {
-    background-color: #276749;
-    color: #ffffff;
-}
-
-.badge-easy {
-    background-color: #2f855a;
-    color: #ffffff;
-}
-
-.badge-medium {
-    background-color: #ecc94b;
-    color: #2d3748;
-}
-
-.badge-hard {
-    background-color: #c53030;
-    color: #ffffff;
-}
-
-.recipe-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.recipe-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .1) !important;
 }
 </style>

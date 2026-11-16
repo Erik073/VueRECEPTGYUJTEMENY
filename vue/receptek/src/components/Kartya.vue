@@ -1,58 +1,48 @@
 <script setup>
-defineProps({
-    recipes: {
-        type: Array,
+const fallbackImage = new URL('../assets/husleves.webp', import.meta.url).href
+
+const props = defineProps({
+    recipe: {
+        type: Object,
         required: true
     }
 })
 </script>
 
 <template>
-    <div
-        v-for="(recipe, index) in recipes"
-        :key="index"
-        class="col"
-    >
+    <div class="col">
         <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden recipe-card">
             <div class="position-relative">
-                <img
-                    :src="recipe.image || '/src/assets/husleves.webp'"
-                    class="card-img-top object-fit-cover"
-                    style="height: 200px;"
-                    :alt="recipe.name || 'Recept kép'"
-                >
+                <img :src="props.recipe.image || fallbackImage" class="card-img-top object-fit-cover"
+                    style="height: 200px;" :alt="props.recipe.name || 'Recept kép'">
 
-                <span class="badge bg-white text-dark rounded-pill position-absolute bottom-0 end-0 m-3 px-3 py-2 shadow-sm fw-semibold">
-                    🕒 {{ recipe.time ?? 30 }} perc
+                <span
+                    class="badge bg-white text-dark rounded-pill position-absolute bottom-0 end-0 m-3 px-3 py-2 shadow-sm fw-semibold">
+                    🕒 {{ props.recipe.time ?? 30 }} perc
                 </span>
             </div>
 
             <div class="card-body d-flex flex-column p-4">
                 <div class="mb-2">
-                    <span
-                        class="badge rounded-pill px-3 py-1"
-                        :class="{
-                            'badge-easy': recipe.difficulty === 'Könnyű',
-                            'badge-medium': recipe.difficulty === 'Közepes',
-                            'badge-hard': recipe.difficulty === 'Nehéz'
-                        }"
-                    >
-                        {{ recipe.difficulty || 'Könnyű' }}
+                    <span class="badge rounded-pill px-3 py-1" :class="{
+                        'badge-easy': props.recipe.difficulty === 'Könnyű',
+                        'badge-medium': props.recipe.difficulty === 'Közepes',
+                        'badge-hard': props.recipe.difficulty === 'Nehéz'
+                    }">
+                        {{ props.recipe.difficulty || 'Könnyű' }}
                     </span>
                 </div>
 
                 <h5 class="card-title fw-bold mb-2">
-                    {{ recipe.name || 'Új recept' }}
+                    {{ props.recipe.name || 'Új recept' }}
                 </h5>
 
                 <p class="card-text text-muted small mb-4">
-                    {{ recipe.description || 'Friss és finom recept a családnak.' }}
+                    {{ props.recipe.description || 'Friss és finom recept a családnak.' }}
                 </p>
 
-                <a
-                    href="#"
-                    class="btn btn-recipe w-100 mt-auto py-2 px-3 rounded-3 d-flex justify-content-between align-items-center fw-semibold"
-                >
+                <a href="#"
+                    class="btn btn-recipe w-100 mt-auto py-2 px-3 rounded-3 d-flex justify-content-between align-items-center fw-semibold">
                     <span>Recept megtekintése</span>
                     <span>&rarr;</span>
                 </a>
