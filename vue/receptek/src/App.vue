@@ -1,5 +1,6 @@
 <script setup>
 import Recept from './components/Recept.vue';
+import UjRecept from './components/UjRecept.vue'
 </script>
 
 <template>
@@ -14,7 +15,7 @@ import Recept from './components/Recept.vue';
         </a>
         <div class="d-flex align-items-center gap-4">
           <a class="nav-link text-secondary fw-medium p-0" href="#">Receptek</a>
-          <a class="btn btn-success text-white fw-medium px-3 py-2 rounded-3" href="#">+ Új recept</a>
+          <a class="btn btn-success text-white fw-medium px-3 py-2 rounded-3" href="/src/components/UjRecept.vue">+ Új recept</a>
         </div>
 
       </div>
