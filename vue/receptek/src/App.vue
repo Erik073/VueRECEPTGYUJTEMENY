@@ -8,11 +8,9 @@ const currentView = ref('recipes')
 function showRecipes() {
   currentView.value = 'recipes'
 }
-
 function showNewRecipe() {
   currentView.value = 'new-recipe'
 }
-
 function handleAddRecipe() {
   currentView.value = 'recipes'
 }
