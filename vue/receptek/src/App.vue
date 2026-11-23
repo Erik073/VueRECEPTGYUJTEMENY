@@ -1,6 +1,8 @@
 <script setup>
 import { ref, watch } from 'vue'
 
+import palacsinta from './assets/palacsinta.jpg'
+import bolognai from './assets/bolognai.jpg'
 import husleves from './assets/husleves.webp'
 import paprikaskrumpli from './assets/paprikaskrumpli.jpg'
 import Recept from './components/Recept.vue'
@@ -12,10 +14,10 @@ const STORAGE_KEY = 'recept-gyujtemeny'
 const defaultRecipes = [
   {
     id: 1,
-    name: 'Gulyásleves',
+    name: 'Húsleves',
     image: husleves,
-    description: 'A magyar konyha egyik legismertebb levese, marhahússal, zöldségekkel és fűszerpaprikával.',
-    difficulty: 'Közepes',
+    description: 'A magyar konyha egyik legismertebb levese.',
+    difficulty: 'Könnyű',
     time: 50
   },
   {
@@ -23,16 +25,24 @@ const defaultRecipes = [
     name: 'Paprikás krumpli',
     image: paprikaskrumpli,
     description: 'Tartalmas egytálétel burgonyából, kolbásszal, hagymával és fűszerpaprikával.',
-    difficulty: 'Könnyű',
+    difficulty: 'Nehéz',
     time: 60
   },
   {
     id: 3,
     name: 'Palacsinta',
-    image: husleves,
+    image: palacsinta,
     description: 'Vékony, könnyű tésztájú palacsinta, amely lekvárral, kakaóval vagy túróval is megtölthető.',
-    difficulty: 'Nehéz',
+    difficulty: 'Könnyű',
     time: 20
+  },
+   {
+    id: 4,
+    name: 'Bolognai',
+    image: bolognai,
+    description: 'Az olasz konyha egyik legismertebb fogása.',
+    difficulty: 'Közepes',
+    time: 45
   }
 ]
 
