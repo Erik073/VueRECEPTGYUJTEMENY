@@ -41,11 +41,10 @@ const props = defineProps({
                     {{ props.recipe.description || 'Friss és finom recept a családnak.' }}
                 </p>
 
-                <a href="#"
-                    class="btn btn-recipe w-100 mt-auto py-2 px-3 rounded-3 d-flex justify-content-between align-items-center fw-semibold">
-                    <span>Recept megtekintése</span>
-                    <span>&rarr;</span>
-                </a>
+                <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-warning  py-2 px-3 rounded-3   fw-semibold text-center">Módosítás</button>
+                <button type="button" class="btn btn-danger  mt-auto py-2 px-3 rounded-3   fw-semibold text-center">Törlés</button>
+                </div>
             </div>
         </div>
     </div>
