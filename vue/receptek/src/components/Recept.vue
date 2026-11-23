@@ -45,6 +45,18 @@ const sortedRecipes = computed(() => {
             return recipesCopy.sort((a, b) => (a.name || '').localeCompare(b.name || ''))
     }
 })
+
+const emit = defineEmits(['deleteRecipe', 'editRecipe'])
+
+function deleteRecipe(id) {
+    emit('deleteRecipe', id)
+}
+
+function editRecipe(recipe) {
+    emit('editRecipe', recipe)
+}
+
+
 </script>
 
 <template>
@@ -96,7 +108,7 @@ const sortedRecipes = computed(() => {
             </div>
 
             <div v-else class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                <Kartyak v-for="(recipe, index) in sortedRecipes" :key="recipe.id ?? index" :recipe="recipe" />
+                <Kartyak v-for="(recipe, index) in sortedRecipes" :key="recipe.id ?? index" :recipe="recipe" @deleteRecipe="deleteRecipe" @editRecipe="editRecipe"/>
             </div>
         </div>
     </section>

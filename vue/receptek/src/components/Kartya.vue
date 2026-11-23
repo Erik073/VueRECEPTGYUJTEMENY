@@ -7,6 +7,8 @@ const props = defineProps({
         required: true
     }
 })
+
+const emit = defineEmits(['deleteRecipe', 'editRecipe'])
 </script>
 
 <template>
@@ -41,9 +43,9 @@ const props = defineProps({
                     {{ props.recipe.description || 'Friss és finom recept a családnak.' }}
                 </p>
 
-                <div class="d-flex justify-content-between">
-                <button type="button" class="btn btn-warning  py-2 px-3 rounded-3   fw-semibold text-center">Módosítás</button>
-                <button type="button" class="btn btn-danger  mt-auto py-2 px-3 rounded-3   fw-semibold text-center">Törlés</button>
+                <div class="d-flex gap-2 mt-auto">
+                <button type="button" class="btn btn-warning  py-2 px-3 rounded-3   fw-semibold text-center" @click="emit('editRecipe', props.recipe)">Módosítás</button>
+                <button type="button" class="btn btn-danger  mt-auto py-2 px-3 rounded-3   fw-semibold text-center" @click="emit('deleteRecipe', props.recipe.id)">Törlés</button>
                 </div>
             </div>
         </div>

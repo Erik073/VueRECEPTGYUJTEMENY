@@ -1,7 +1,14 @@
 <script setup>
-import { reactive } from 'vue'
+import { reactive, watch } from 'vue'
 
-const emit = defineEmits(['addRecipe'])
+const props = defineProps({
+  recipe: {
+    type: Object,
+    default: null
+  }
+})
+
+const emit = defineEmits(['addRecipe', 'updateRecipe'])
 
 const defaultImage = new URL('../assets/husleves.webp', import.meta.url).href
 
@@ -14,6 +21,18 @@ const form = reactive({
 })
 
 const errors = reactive({})
+
+watch(() => props.recipe, (recipe) => {
+  if (recipe) {
+    form.name = recipe.name
+    form.image = recipe.image
+    form.description = recipe.description
+    form.difficulty = recipe.difficulty
+    form.time = recipe.time
+  } else {
+    resetForm()
+  }
+}, { immediate: true })
 
 function validateForm() {
   errors.name = !form.name.trim() ? 'A recept neve kötelező.' : ''
@@ -48,18 +67,27 @@ function resetForm() {
   Object.keys(errors).forEach((key) => delete errors[key])
 }
 
-function addRecipe() {
+function saveRecipe() {
   if (!validateForm()) {
     return
   }
 
-  emit('addRecipe', {
+  const savedRecipe = {
     name: form.name.trim(),
     image: form.image || defaultImage,
     description: form.description.trim(),
     difficulty: form.difficulty,
     time: Number(form.time)
-  })
+  }
+
+  if (props.recipe) {
+    emit('updateRecipe', {
+      ...savedRecipe,
+      id: props.recipe.id
+    })
+  } else {
+    emit('addRecipe', savedRecipe)
+  }
 
   resetForm()
 }
@@ -67,11 +95,11 @@ function addRecipe() {
 
 <template>
   <header>
-    <h1>ÚJ Recept</h1>
+    <h1>{{ props.recipe ? 'Recept módosítása' : 'Új recept' }}</h1>
   </header>
 
   <main>
-    <form @submit.prevent="addRecipe" class="row g-3">
+    <form @submit.prevent="saveRecipe" class="row g-3">
       <div class="col-12">
         <label class="form-label">Recept neve</label>
         <input v-model="form.name" type="text" class="form-control" required>
@@ -107,7 +135,7 @@ function addRecipe() {
 
       <div class="col-12">
         <button class="btn btn-success" type="submit">
-          Recept hozzáadása
+          {{ props.recipe ? 'Recept módosítása' : 'Recept hozzáadása' }}
         </button>
       </div>
     </form>

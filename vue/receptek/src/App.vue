@@ -5,6 +5,7 @@ import husleves from './assets/husleves.webp'
 import paprikaskrumpli from './assets/paprikaskrumpli.jpg'
 import Recept from './components/Recept.vue'
 import UjRecept from './components/UjRecept.vue'
+import Kartya from './components/Kartya.vue'
 
 const STORAGE_KEY = 'recept-gyujtemeny'
 
@@ -34,6 +35,7 @@ const defaultRecipes = [
     time: 20
   }
 ]
+
 
 const recipes = ref(loadRecipes())
 const showForm = ref(false)
@@ -69,7 +71,32 @@ function addRecipe(recipe) {
       id: Date.now()
     }
   ]
+  showForm.value = false  
+}
+
+function deleteRecipe(id) {
+  recipes.value = recipes.value.filter((recipe) => recipe.id !== id)
+}
+
+const editingRecipe = ref(null)
+
+
+function startEditingRecipe(recipe) {
+  editingRecipe.value = { ...recipe }
+  showForm.value = true
+}
+
+function updateRecipe(updatedRecipe) {
+  recipes.value = recipes.value.map((recipe) =>
+    recipe.id === updatedRecipe.id ? { ...updatedRecipe } : recipe
+  )
+  editingRecipe.value = null
   showForm.value = false
+}
+
+function openNewRecipeForm() {
+  editingRecipe.value = null
+  showForm.value = true
 }
 </script>
 
@@ -91,7 +118,7 @@ function addRecipe(recipe) {
             Receptek
           </button>
 
-          <button class="btn btn-success text-white fw-medium px-3 py-2 rounded-3" @click="showForm = true">
+          <button class="btn btn-success text-white fw-medium px-3 py-2 rounded-3" @click="openNewRecipeForm">
             + Új recept
           </button>
         </div>
@@ -100,8 +127,18 @@ function addRecipe(recipe) {
   </header>
 
   <main class="container my-4">
-    <UjRecept v-if="showForm" @addRecipe="addRecipe" />
-    <Recept v-else :recipes="recipes" />
+    <UjRecept
+      v-if="showForm"
+      :recipe="editingRecipe"
+      @addRecipe="addRecipe"
+      @updateRecipe="updateRecipe"
+    />
+    <Recept
+      v-else
+      :recipes="recipes"
+      @deleteRecipe="deleteRecipe"
+      @editRecipe="startEditingRecipe"
+    />
   </main>
 
   <footer class="container bg-white border-top py-3 mt-auto">
